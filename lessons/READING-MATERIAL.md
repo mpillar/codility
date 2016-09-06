@@ -40,25 +40,49 @@ by noting that as long as the value of the previous slice is greater than zero, 
 to add to it.
 
 ## Prime numbers
-TODO
+
+We can count the number of divisors of a number `n` by checking from two to the square root of `n`
+(this is thanks to the useful property of the symmetric divisor).
 
 ## Sieve
-TODO
+
+The sieve of Eratosthenes is a simple and popular technique for finding all the prime numbers from
+2 to a given number `n`. The algorithm takes is name from the process of sieving.
+
+The process works as follows. We start with the set of number from 2 to `n`. At each step we choose
+the smallest number in the set and remove all its multiples. We only have to do this up to the
+square root of `n`. This runs in `O(n log log n)` time (the proof here is interesting).
+
+Using the sieve of Eratosthenes, we can quickly factor numbers. If we know that one of the prime
+factors of `x` is `p`, then all the prime factors of `x` are `p` plus the decomposition of `x/p`.
+This runs in `O(log x)` time, when we are given the pre-computed sieve.
 
 ##  GCD
-TODO
+
+The Euclidean algorithm solves the problem of calculating the greatest common divisor (gcd) between
+two positive integers. There are many implementations of the Euclidean algorithm, varying in
+complexity and efficiency.
+
+Knowing the GCD, we can also quickly compute the LCM (lowest common multiple).
 
 ## Fibonacci
-TODO
+
+The Fibonacci sequence is defined recursively by summing the last two elements of the sequence and
+starting with 0 and 1.
+
+There are advanced ways to compute Fibonacci numbers very quickly.
 
 ## Binary search
-TODO
 
-## Caterpillar method
-TODO
+Binary search is the search of a sorted array. It runs in `O(log n)` time.
 
 ## Greedy algorithm
-TODO
+
+Greedy programming is a method by which a solution is determined based on making the locally optimal
+choice at any given moment. Depending on the problem, a greedy solution may or may not be the best
+approach.
 
 ## Dynamic programming
-TODO
+
+Dynamic programming is a method by which a solution is determined based on solving successively
+similar but smaller problems.
