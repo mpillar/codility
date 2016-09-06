@@ -4,12 +4,13 @@ FIXME this isn't scoring 100% yet.
 
 import unittest
 import collections
+import sys
 
 
 class Test(unittest.TestCase):
     test_cases = [
-        # 0  1  2  3  4  5  6  7  8  9  10, and 11 is the landing pad. Start at -1.
         [[0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0], 3],
+        [[0, 0, 0, 0, 0, 0, 0, 0, 0], -1],
     ]
 
     def test(self):
@@ -23,21 +24,21 @@ class Graph(object):
         self.nodes = set()
         self.edges = collections.defaultdict(set)
 
-    def connect(self, node_a, node_b):
-        for node in [node_a, node_b]:
+    def connect(self, a, b):
+        for node in [a, b]:
             if node not in self.nodes:
                 self.nodes.add(node)
-        self.edges[node_a].add(node_b)
-        self.edges[node_b].add(node_a)
+        self.edges[a].add(b)
+        self.edges[b].add(a)
 
-    def shortest_path(self, node_a, node_b):
+    def shortest_path(self, a, b):
         """
         Find the shortest path from node A to node B. Use Dijkstra's algorithm.
         """
-        distances = collections.defaultdict(int)
+        distances = collections.defaultdict(lambda: sys.maxint)
         queue = []
         visited = set()
-        for connected in self.edges[node_a]:
+        for connected in self.edges[a]:
             distances[connected] = 1
             queue.append(connected)
         while len(queue) > 0:
@@ -46,12 +47,9 @@ class Graph(object):
                 continue
             visited.add(node)
             for connected in self.edges[node]:
-                queue.append(connected)
-                if distances[connected] == 0:
-                    distances[connected] = distances[node]+1
-                else:
-                    distances[connected] = min(distances[connected], distances[node]+1)
-        return -1 if distances[node_b] == 0 else distances[node_b]
+                if connected not in visited: queue.append(connected)
+                distances[connected] = min(distances[connected], distances[node]+1)
+        return -1 if distances[b] == sys.maxint else distances[b]
 
 
 def fibonacci(n):
@@ -63,18 +61,20 @@ def fibonacci(n):
         return result[0:n]
     counter = 2
     while True:
-        next = result[counter-2] + result[counter-1]
-        if next > n:
+        next_fib = result[counter-2] + result[counter-1]
+        if next_fib > n:
             break
-        result.append(next)
+        result.append(next_fib)
         counter += 1
     return result
 
 
 def solution(A):
     N = len(A)
-    A += [1] # Landing pad.
-    f = fibonacci(N+1)
+    # Landing pad. This simplifies the algorithm.
+    A += [1]
+    # Plus two to account for the start and end positions.
+    f = fibonacci(N+2)
     g = Graph()
     for i in xrange(-1, N):
         if 0 <= i < len(A) and A[i] != 1:
@@ -82,11 +82,10 @@ def solution(A):
         # Look for all nodes that we can hop to from here. Add these edges to the graph.
         for hop_distance in f:
             low = i - hop_distance
-            if low >= 0 and A[low] == 1:
-                g.connect(i, low)
             high = i + hop_distance
-            if high < len(A) and A[high] == 1:
-                g.connect(i, high)
+            for d in [low, high]:
+                if 0 <= d < len(A) and A[d] == 1:
+                    g.connect(i, d)
     return g.shortest_path(-1, N)
 
 
